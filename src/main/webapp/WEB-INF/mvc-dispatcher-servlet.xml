@@ -6,6 +6,7 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <context:component-scan base-package="com.jim.app"/>
+    <mvc:annotation-driven/>
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/pages/"/>
@@ -15,20 +16,23 @@
     <bean class="org.springframework.context.support.ReloadableResourceBundleMessageSource" id="bundleMessageSource">
         <property name="basename" value="message"/>
         <property name="defaultEncoding" value="UTF-8"/>
-        <property name="useCodeAsDefaultMessage" value="true"/>
     </bean>
 
-    <bean class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
-        <property name="defaultLocale" value="cn"/>
-        <property name="defaultTimeZone" value="UTC"/>
-        <property name="cookiePath" value="/"/>
-        <property name="cookieDomain" value="jim.com"/>
+    <bean class="org.springframework.web.servlet.i18n.SessionLocaleResolver" id="sessionLocaleResolver">
+        <property name="defaultLocale" value="zh_CN"/>
+        <property name="defaultTimeZone" value="CST"/>
     </bean>
 
+    <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" id="localeChangeInterceptor">
+        <property name="paramName" value="language"/>
+    </bean>
 
-    <mvc:interceptors>
-        <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" id="localeChangeInterceptor">
-            <property name="paramName" value="locale"/>
-        </bean>
-    </mvc:interceptors>
+    <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping" id="simpleUrlHandlerMapping">
+        <property name="interceptors">
+            <list>
+                <ref bean="localeChangeInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
 </beans>
